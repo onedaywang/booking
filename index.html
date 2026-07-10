@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>眼耳鼻喉科预约登记 · 入口</title>
+  <!-- 禁止缓存，保证地址更新后患者能拿到最新跳转目标 -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <style>
+    body {
+      margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #eef1f6; color: #3a4657;
+    }
+    .card {
+      background: #fff; border-radius: 16px; padding: 32px 28px; max-width: 340px; text-align: center;
+      box-shadow: 0 6px 22px rgba(16,30,54,.08);
+    }
+    .spinner {
+      width: 36px; height: 36px; margin: 0 auto 18px; border: 3px solid #e3e9f1;
+      border-top-color: #1d6fe0; border-radius: 50%; animation: spin .8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    h1 { font-size: 17px; color: #0f1b2d; margin: 0 0 8px; }
+    p { font-size: 13.5px; color: #7b8aa0; margin: 6px 0; line-height: 1.6; }
+    a.btn {
+      display: inline-block; margin-top: 14px; padding: 10px 22px; background: linear-gradient(135deg, #2b7bef, #1657c7);
+      color: #fff; text-decoration: none; border-radius: 10px; font-size: 14px; font-weight: 600;
+    }
+    .hide { display: none; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="spinner" id="spin"></div>
+    <h1>江夏区第一人民医院<br>眼耳鼻喉科预约登记</h1>
+    <p id="msg">正在进入预约页面…</p>
+    <div id="fallback" class="hide">
+      <p>如果没有自动跳转，请点击下方按钮：</p>
+      <a class="btn" id="gobtn" href="#">进入预约登记</a>
+    </div>
+  </div>
+  <script>
+    // 跳转目标写在同目录的 target.json 里；每次隧道地址变化，只需更新该文件
+    // 加时间戳参数避免 CDN/浏览器缓存旧目标
+    fetch('target.json?t=' + Date.now(), { cache: 'no-store' })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        var url = d && d.url;
+        if (!url) throw new Error('no url');
+        var go = document.getElementById('gobtn');
+        go.href = url;
+        // 先展示手动按钮兜底，再自动跳转
+        document.getElementById('fallback').classList.remove('hide');
+        location.replace(url);
+      })
+      .catch(function () {
+        document.getElementById('spin').classList.add('hide');
+        document.getElementById('msg').textContent = '预约入口暂时无法连接，请稍后重试或联系工作人员。';
+      });
+  </script>
+</body>
+</html>
